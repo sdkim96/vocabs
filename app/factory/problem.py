@@ -49,7 +49,7 @@ class ProblemFactory:
         self,
         
     ):
-        problems = self.create()
+        problems = self.create_problems()
         problems =  self.inject_answer(problems)
         problems = self.prepare(problems)
         if problems:
@@ -71,7 +71,7 @@ class ProblemFactory:
         
         return choised
 
-    def create(self)-> List[Problem]:
+    def create_problems(self)-> List[Problem]:
         """ 
         생성자의 promblems_count만큼의 문제를 생성합니다. 
         이 단계에서는 단순히 문제를 '생성' 하는 단계이지, 절대 '준비' 하는 단계는 아님.

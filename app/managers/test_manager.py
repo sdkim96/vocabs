@@ -16,7 +16,7 @@ class TestManager:
         self.request_key = request_key
         self.user = user
 
-    def publish(self, problem_factory: ProblemFactory) -> Paper:
+    def publish_paper(self, problem_factory: ProblemFactory) -> Paper:
         imported = problem_factory.run_pipeline()
         if imported is None:
             raise ValueError("problem을 생성하는데 문제가 발생함")

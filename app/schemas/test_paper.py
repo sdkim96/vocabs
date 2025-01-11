@@ -7,7 +7,7 @@ from sqlmodel import SQLModel, Field as SQLModelField
 from sqlalchemy.dialects.postgresql import JSONB
 
 from app.schemas.enum import Difficulty
-from app.schemas.problem import Problem, QA
+from app.schemas.problem import Problem, QA, Text
 from app.schemas.auth import User
 
 
@@ -36,8 +36,14 @@ class Paper(BaseModel):
     answer_map: dict
     problems: List[Problem]
 
+    def model_validate_to_end(self):
+        for p in self.problems:
+            for c in p.candidates:
+                c.text = Text.model_validate(c.text)
+        
+        return self
     
-    def for_student(self):
+    def with_test_version(self):
         q_a_list = []
         for p in self.problems:
             q = p.question
@@ -103,7 +109,7 @@ class TestPaper(BaseModel):
     binded: User
     q_a_set: List[QA]
 
-    def apply(self, paper: Paper) -> Paper:
+    def to_published_version(self, paper: Paper) -> Paper:
         checked_map = {}
         
         for qa in self.q_a_set:

@@ -3,6 +3,7 @@ from .problem import (
     Problem,
     Text,
     Candidate,
+    QA
 )
 from .test_paper import (
     Paper,
@@ -36,5 +37,6 @@ __all__ =[
     'APIStatus',
     'GetPaperResponse',
     'PaperStore',
-    'PostSubmitResponse'
+    'PostSubmitResponse',
+    'QA'
 ]
