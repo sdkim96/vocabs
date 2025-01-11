@@ -28,11 +28,5 @@ class TestManager:
             problems=self.imported.problems
         )
     
-    def evaluate(self, paper: Paper):
-        
-        return paper.score()
-    
-    def save(self, paper: Paper, ):
+    def calculate_test_time(self):
         pass
-    
-    

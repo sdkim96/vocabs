@@ -43,7 +43,7 @@ class Paper(BaseModel):
         
         return self
     
-    def with_test_version(self):
+    def to_test_version(self):
         q_a_list = []
         for p in self.problems:
             q = p.question
@@ -60,7 +60,7 @@ class Paper(BaseModel):
             q_a_set=q_a_list
         )
 
-    def score(self):
+    def calculate_score(self):
         all_weights = 0
         weight_map = {}
 
@@ -109,7 +109,7 @@ class TestPaper(BaseModel):
     binded: User
     q_a_set: List[QA]
 
-    def to_published_version(self, paper: Paper) -> Paper:
+    def apply_changes(self, paper: Paper) -> Paper:
         checked_map = {}
         
         for qa in self.q_a_set:
