@@ -137,9 +137,12 @@ class Problem(BaseModel):
         return wrongs
     
 
-    def set_checked(self, check_map: dict):
+    def set_checked(self, candidate_id):
         for c in self.candidates:
-            c.checked = check_map[c.id]
+            if c.u_id == candidate_id:
+                c.checked = True
+            else:
+                c.checked = False
         
         return self
 

@@ -17,7 +17,8 @@ from .enum import (
     APIStatus
 )
 from .api import (
-    GetPaperResponse
+    GetPaperResponse,
+    PostSubmitResponse
 )
 
 __all__ =[
@@ -34,5 +35,6 @@ __all__ =[
     'Tag',
     'APIStatus',
     'GetPaperResponse',
-    'PaperStore'
+    'PaperStore',
+    'PostSubmitResponse'
 ]

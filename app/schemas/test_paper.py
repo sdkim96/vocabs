@@ -69,16 +69,20 @@ class Paper(BaseModel):
                 case _:
                     weight = 2
             
-            weight_map[p.id] = weight
+            weight_map[p.id] = [weight, p.corrected]
+            
             all_weights += weight
 
         normalized_score_map = {
-            id: (weight / all_weights) * 100 for id, weight in weight_map.items()
+            id: [(weight[0] / all_weights) * 100, weight[1]] for id, weight in weight_map.items()
         }
 
-        total_score = sum(normalized_score_map.values())
-        
-        return total_score
+        sum = 0
+        for _, score in normalized_score_map.items():
+            if score[1]:
+                sum += score[0]
+
+        return sum
             
 
     def get_p_counts(self) -> int:
@@ -101,7 +105,7 @@ class TestPaper(BaseModel):
 
     def apply(self, paper: Paper) -> Paper:
         checked_map = {}
-
+        
         for qa in self.q_a_set:
             for a in qa.answers:
                 if a.checked:
@@ -109,8 +113,11 @@ class TestPaper(BaseModel):
                     break
 
         for p in paper.problems:
-            p.set_checked(checked_map[p.u_id])
-
+            checked_candidate_id = checked_map.get(p.u_id)
+            
+            if checked_candidate_id is not None:
+                p.set_checked(checked_candidate_id)
+                
         return paper
                     
 if __name__ == "__main__":
