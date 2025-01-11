@@ -3,7 +3,8 @@ from enum import Enum
 class UType(Enum):
     STUDENT = 'student'
     TEACHER = 'teacher'
-    OTHER = 'other'
+    GUEST = 'guest'
+    ADMIN = 'admin'
 
 class QType(Enum):
     """Korean -> 질문 한국어, 답변 영어"""
@@ -26,3 +27,8 @@ class Tag(Enum):
     INTERJECTION = 'interjection'  # 감탄사
 
     UNDECIDED = 'undecided'
+
+class APIStatus(Enum):
+    SUCCESS = 20000
+    FAIL = 50001
+    ERROR = 50000

@@ -11,4 +11,5 @@ class User(SQLModel):
     id: uuid.UUID = Field(default_factory=uuid.uuid4)
     name: str = "admin"
     password: str = "aaaa"
-    user_type: UType = UType.OTHER
+    user_type: UType = UType.ADMIN
+

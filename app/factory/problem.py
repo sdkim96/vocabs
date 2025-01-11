@@ -6,7 +6,6 @@ from typing import List, Optional
 from pydantic import BaseModel, Field
 
 from app.schemas.problem import Candidate, Problem, Text
-from app.core.db import engine
 
 class Exportation(BaseModel):
     id: uuid.UUID = Field(default_factory=uuid.uuid4)
@@ -18,14 +17,20 @@ class ProblemFactory:
 
     def __init__(
         self, 
+        db_session: Session,
         texts: Optional[List[Text]] = None,
         candidate_limit: int = 4, 
         problems_count: int = 20,
         
-    ) -> None:
         
+    ) -> None:
+        """ 차후에 옵션값을 줘서 문제 생성시 옵션값을 줄 수 있도록 수정할 예정입니다. """
         self.candidate_limit = candidate_limit
         self.problems_count = problems_count
+        if not db_session:
+            raise ValueError('db_session이 필요합니다.')
+        
+        self.db_session = db_session
         
         all_texts = texts if texts else self._load_texts()
         if len(all_texts) < problems_count * candidate_limit:
@@ -33,13 +38,17 @@ class ProblemFactory:
 
         self.choised_texts = self._choice_texts(all_texts, k=(self.problems_count * self.candidate_limit))
 
-        answer_map = collections.defaultdict(int)
+        answer_map = {}
         for i in range(self.problems_count):
             answer_map[i] = random.choice(range(self.candidate_limit))
 
         self.answer_map = answer_map
+        
 
-    def run_pipeline(self):
+    def run_pipeline(
+        self,
+        
+    ):
         problems = self.create()
         problems =  self.inject_answer(problems)
         problems = self.prepare(problems)
@@ -50,7 +59,7 @@ class ProblemFactory:
     def _load_texts(self) -> List[Text]:
         
         stmt = select(Text)
-        with Session(engine) as s:
+        with self.db_session as s:
             texts = list(s.exec(stmt).fetchall())
         
         return texts
@@ -99,6 +108,15 @@ class ProblemFactory:
         return problems
 
     def prepare(self, unprepared: List[Problem]):
+        
+
+        print("answer map과 candidates들을 실제 candidate의 u_id로 재매핑합니다.")
+        new_map = {}
+        for problem in unprepared:
+            answer = problem.get_answer_obj()
+            new_map[problem.u_id] = answer.u_id
+        
+        self.answer_map = new_map
         
         try:
             for problem in unprepared:
