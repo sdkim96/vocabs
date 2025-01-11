@@ -1,0 +1,21 @@
+[tool.poetry]
+name = "vocabs"
+version = "0.1.0"
+description = ""
+authors = ["sdkim96 <seong960603@gmail.com>"]
+readme = "README.md"
+packages = [{include = "app"}]
+
+[tool.poetry.dependencies]
+python = "3.11.9"
+fastapi = "^0.115.6"
+sqlmodel = "^0.0.22"
+pydantic-settings = "^2.7.1"
+pandas = "^2.2.3"
+openpyxl = "^3.1.5"
+psycopg = "^3.2.3"
+uvicorn = "^0.34.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
