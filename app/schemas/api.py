@@ -1,7 +1,7 @@
 import uuid
 
 from pydantic import BaseModel, Field
-from app.schemas import APIStatus, TestPaper, User
+from app.schemas import APIStatus, TestPaper, UserDTO
 
 class BaseResponse(BaseModel):
     request_id: uuid.UUID = Field(default_factory=uuid.uuid4)
@@ -12,6 +12,6 @@ class GetPaperResponse(BaseResponse):
 
 class PostSubmitResponse(BaseResponse):
     score: int
-    user: User
+    user: UserDTO
 
     

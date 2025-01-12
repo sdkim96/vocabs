@@ -1,4 +1,8 @@
-from .auth import (User, Token)
+from .auth import (
+    User, 
+    Token, 
+    UserDTO
+)
 from .problem import (
     Problem,
     Text,
@@ -38,5 +42,6 @@ __all__ =[
     'GetPaperResponse',
     'PaperStore',
     'PostSubmitResponse',
-    'QA'
+    'QA',
+    'UserDTO'
 ]

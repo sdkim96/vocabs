@@ -15,7 +15,7 @@ from app.schemas import (
     TestPaper, 
     GetPaperResponse, 
     PaperStore, 
-    User, 
+    UserDTO, 
     UType, 
     Paper, 
     Text,
@@ -24,7 +24,10 @@ from app.schemas import (
 
 from app.deps import Session, get_db
 
-admin = User(id=uuid.UUID("949ac3fa-7967-43e2-8029-dd14a03ac8cd"), name="admin", password="admin", user_type=UType.ADMIN)
+admin = UserDTO(
+    id=uuid.UUID("949ac3fa-7967-43e2-8029-dd14a03ac8cd"), 
+    name="admin"
+)
 
 
 app = FastAPI(
@@ -52,14 +55,13 @@ async def get_paper(db: Session = Depends(get_db)):
     )
     test_version = published_version.to_test_version()
 
-    stmt = insert(PaperStore).values(
-        prefix=str(published_version.binded.id),
-        key=str(published_version.id),
-        value=published_version.model_dump(mode="json")
+    namespace = (published_version.binded.id, published_version.id)
+    PaperStore.put(
+        db, 
+        namespace, 
+        0,
+        published_version.model_dump(mode="json")
     )
-
-    db.exec(stmt) # type: ignore
-    db.commit()
 
     return GetPaperResponse(paper = test_version)
 
@@ -67,29 +69,22 @@ async def get_paper(db: Session = Depends(get_db)):
 @app.post("/api/submit", response_model=PostSubmitResponse)
 async def submit_paper(test_paper: TestPaper, db: Session = Depends(get_db)):
  
-    stmt = (
-        select(PaperStore.value)
-        .where(PaperStore.prefix == str(test_paper.binded.id))
-        .where(PaperStore.key == str(test_paper.id))
-    )
-    paper_json: dict = db.exec(stmt).first() # type: ignore
+    namespace = (test_paper.binded.id, test_paper.id)
+    
+    paper_json = PaperStore.get(db, namespace, 0) # type: ignore
     to_published_version = (
         Paper.model_validate(paper_json)
         .model_validate_to_end()
     )
     changed_paper = test_paper.apply_changes(to_published_version)
 
-    stmt = (
-        update(PaperStore)
-        .where(PaperStore.key == str(changed_paper.id)) # type: ignore
-        .values(
-            value=changed_paper.model_dump(mode="json"),
-            updated_at=datetime.now()
-        )
+    
+    PaperStore.put(
+        db, 
+        namespace, 
+        0,
+        changed_paper.model_dump(mode="json")
     )
-
-    db.exec(stmt) # type: ignore
-    db.commit()
 
     score = changed_paper.calculate_score()
 
@@ -97,3 +92,11 @@ async def submit_paper(test_paper: TestPaper, db: Session = Depends(get_db)):
         score=score,
         user=changed_paper.binded
     )
+
+
+@app.get("/api/analyze", response_model=PostSubmitResponse)
+async def analyze(db: Session = Depends(get_db)):
+    
+    a = uuid.UUID("949ac3fa-7967-43e2-8029-dd14a03ac8cd")
+    searched = PaperStore.search(db, namespace=(a,))
+    print(searched)

@@ -1,6 +1,6 @@
 import uuid
 from typing import Optional
-from app.schemas.auth import User
+from app.schemas.auth import UserDTO
 from app.schemas import Paper
 from app.factory.problem import ProblemFactory
 
@@ -9,7 +9,7 @@ class TestManager:
     def __init__(
         self,
         request_key: uuid.UUID = uuid.uuid4(),
-        user: User = User()
+        user: UserDTO = UserDTO()
 
     ) -> None:
         

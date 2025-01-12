@@ -1,17 +1,31 @@
 import random
 import uuid
 from datetime import datetime
-from typing import List, Optional, Dict
+from typing import (
+    List, 
+    Optional, 
+    Dict, 
+    Tuple,
+    Any
+)
 from pydantic import BaseModel, Field
-from sqlmodel import SQLModel, Field as SQLModelField
+
+from sqlmodel import SQLModel, Session, select, Field as SQLModelField
 from sqlalchemy.dialects.postgresql import JSONB
 
 from app.schemas.enum import Difficulty
 from app.schemas.problem import Problem, QA, Text
-from app.schemas.auth import User
+from app.schemas.auth import User, UserDTO
 
 
 class PaperStore(SQLModel, table=True):
+    """
+    prefix: 유저id, 문제지의 id의 조합
+    key: request_id (문제를 요청할때의 request_id)
+    value: 문제지의 정보를 담고 있는 dict
+
+    
+    """
 
     __table_args__ = {"extend_existing": True}
 
@@ -29,10 +43,84 @@ class PaperStore(SQLModel, table=True):
         description="The timestamp when the record was last updated"
     )
 
+    @classmethod
+    def search(
+        cls,
+        db: Session,
+        namespace: Tuple[Any, ...]
+    ) -> List[Dict]:
+        """ """
+        try:
+            prefix_pattern = ".".join(map(str, namespace)) + "%"
+            stmt = (
+                select(cls.value)
+                .where(cls.prefix.like(prefix_pattern)) # type: ignore
+            )
+            return db.exec(stmt).all() # type: ignore
+            
+        except Exception as e:
+            raise e
+    
+
+    @classmethod
+    def get(
+        cls,
+        db: Session,
+        namespace: Tuple[Any, ...],
+        key: Any
+    ) -> Optional[Dict]:
+        """ """
+        try:
+            prefix = ".".join(map(str, namespace))
+            stmt = (
+                select(cls.value)
+                .where(cls.prefix == prefix)
+                .where(cls.key == str(key))
+            )
+            return db.exec(stmt).first()
+        except Exception as e:
+            raise e
+    
+
+    @classmethod
+    def put(
+        cls,
+        db: Session,
+        namespace: Tuple[Any, ...],
+        key: Any,
+        value: Dict
+    ) -> None:
+        """ """
+        try:
+            prefix = ".".join(map(str, namespace))
+            
+            # 기존 레코드 조회
+            statement = select(cls).where(cls.prefix == prefix, cls.key == str(key))
+            result = db.exec(statement).first()
+            
+            if result:
+                result.value = value
+                result.updated_at = datetime.now()
+                db.add(result)
+            else:
+                new_record = cls(
+                    prefix=prefix,
+                    key=str(key),
+                    value=value,
+                    created_at=datetime.now(),
+                    updated_at=datetime.now()
+                )
+                db.add(new_record)
+            
+            db.commit()
+        except Exception as e:
+            db.rollback()
+            raise e
+
 
 class Paper(BaseModel):
     id: uuid.UUID = Field(default_factory=uuid.uuid4)
-    binded: User
+    binded: UserDTO
     answer_map: dict
     problems: List[Problem]
 
@@ -106,7 +194,7 @@ class Paper(BaseModel):
 
 class TestPaper(BaseModel):
     id: uuid.UUID = Field(default_factory=uuid.uuid4)
-    binded: User
+    binded: UserDTO
     q_a_set: List[QA]
 
     def apply_changes(self, paper: Paper) -> Paper:
