@@ -117,6 +117,11 @@ class Settings(BaseSettings):
         )
 
         return self
+    
+    PEPPER: str
+    JWT_ALGORITHM: str
+    JWT_SECRET_KEY: str
+    JWT_ACCESS_TOKEN_EXPIRE_MINUTES: int
 
 
 settings = Settings() # type: ignore

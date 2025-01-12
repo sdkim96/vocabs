@@ -51,9 +51,9 @@ class PaperStore(SQLModel, table=True):
     ) -> List[Dict]:
         """ """
         try:
-            prefix_pattern = ".".join(map(str, namespace)) + "%"
+            prefix_pattern = "%"+ ".".join(map(str, namespace)) + "%"
             stmt = (
-                select(cls.value)
+                select(cls)
                 .where(cls.prefix.like(prefix_pattern)) # type: ignore
             )
             return db.exec(stmt).all() # type: ignore
@@ -77,7 +77,7 @@ class PaperStore(SQLModel, table=True):
                 .where(cls.prefix == prefix)
                 .where(cls.key == str(key))
             )
-            return db.exec(stmt).first()
+            return db.exec(stmt).first() # type: ignore
         except Exception as e:
             raise e
     
@@ -117,7 +117,6 @@ class PaperStore(SQLModel, table=True):
             db.rollback()
             raise e
 
-
 class Paper(BaseModel):
     id: uuid.UUID = Field(default_factory=uuid.uuid4)
     binded: UserDTO
@@ -131,8 +130,9 @@ class Paper(BaseModel):
         
         return self
     
-    def to_test_version(self):
+    def to_test_version(self, test_id: uuid.UUID):
         q_a_list = []
+        
         for p in self.problems:
             q = p.question
             a = p.answer
@@ -143,7 +143,8 @@ class Paper(BaseModel):
             q_a_list.append(QA(question=q, answers=answers))
 
         return TestPaper(
-            id=self.id, 
+            paper_id=self.id, 
+            test_id=test_id,
             binded=self.binded,
             q_a_set=q_a_list
         )
@@ -191,9 +192,9 @@ class Paper(BaseModel):
         """ 하나의 시험용지에 바인딩된 유저의 이름: str 을 리턴합니다."""
         return self.binded.name
     
-
 class TestPaper(BaseModel):
-    id: uuid.UUID = Field(default_factory=uuid.uuid4)
+    paper_id: uuid.UUID = Field(default_factory=uuid.uuid4)
+    test_id: uuid.UUID = Field(default_factory=uuid.uuid4)
     binded: UserDTO
     q_a_set: List[QA]
 
@@ -213,7 +214,9 @@ class TestPaper(BaseModel):
                 p.set_checked(checked_candidate_id)
                 
         return paper
-                    
+
+    
+
 if __name__ == "__main__":
     from app.core.db import engine
     SQLModel.metadata.create_all(engine)

@@ -8,6 +8,15 @@ export type Answer = {
 
 export type APIStatus = 20000 | 50001 | 50000;
 
+export type Body_sign_in_api_sign_in_post = {
+    grant_type?: (string | null);
+    username: string;
+    password: string;
+    scope?: string;
+    client_id?: (string | null);
+    client_secret?: (string | null);
+};
+
 export type GetPaperResponse = {
     request_id?: string;
     status?: APIStatus;
@@ -22,7 +31,7 @@ export type PostSubmitResponse = {
     request_id?: string;
     status?: APIStatus;
     score: number;
-    user: User;
+    user: UserDTO;
 };
 
 export type QA = {
@@ -36,22 +45,33 @@ export type Question = {
 };
 
 export type TestPaper_Input = {
-    id?: string;
-    binded: User;
+    paper_id?: string;
+    test_id?: string;
+    binded: UserDTO;
     q_a_set: Array<QA>;
 };
 
 export type TestPaper_Output = {
-    id?: string;
-    binded: User;
+    paper_id?: string;
+    test_id?: string;
+    binded: UserDTO;
     q_a_set: Array<QA>;
 };
 
-export type User = {
+export type Token = {
+    access_token: string;
+    token_type?: string;
+};
+
+export type UserCreate = {
+    name: string;
+    password: string;
+    user_type?: UType;
+};
+
+export type UserDTO = {
     id?: string;
     name?: string;
-    password?: string;
-    user_type?: UType;
 };
 
 export type UType = 'student' | 'teacher' | 'guest' | 'admin';
@@ -69,3 +89,19 @@ export type SubmitPaperApiSubmitPostData = {
 };
 
 export type SubmitPaperApiSubmitPostResponse = (PostSubmitResponse);
+
+export type AnalyzeApiAnalysisGetResponse = (PostSubmitResponse);
+
+export type SignUpApiSignUpPostData = {
+    requestBody: UserCreate;
+};
+
+export type SignUpApiSignUpPostResponse = (UserDTO);
+
+export type SignInApiSignInPostData = {
+    formData: Body_sign_in_api_sign_in_post;
+};
+
+export type SignInApiSignInPostResponse = (Token);
+
+export type GetMeApiUserMeGetResponse = (UserDTO);

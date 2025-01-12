@@ -3,7 +3,7 @@
 import type { CancelablePromise } from './core/CancelablePromise';
 import { OpenAPI } from './core/OpenAPI';
 import { request as __request } from './core/request';
-import type { GetPaperApiPaperGetResponse, SubmitPaperApiSubmitPostData, SubmitPaperApiSubmitPostResponse } from './types.gen';
+import type { GetPaperApiPaperGetResponse, SubmitPaperApiSubmitPostData, SubmitPaperApiSubmitPostResponse, AnalyzeApiAnalysisGetResponse, SignUpApiSignUpPostData, SignUpApiSignUpPostResponse, SignInApiSignInPostData, SignInApiSignInPostResponse, GetMeApiUserMeGetResponse } from './types.gen';
 
 export class DefaultService {
     /**
@@ -34,6 +34,68 @@ export class DefaultService {
             errors: {
                 422: 'Validation Error'
             }
+        });
+    }
+    
+    /**
+     * Analyze
+     * @returns PostSubmitResponse Successful Response
+     * @throws ApiError
+     */
+    public static analyzeApiAnalysisGet(): CancelablePromise<AnalyzeApiAnalysisGetResponse> {
+        return __request(OpenAPI, {
+            method: 'GET',
+            url: '/api/analysis'
+        });
+    }
+    
+    /**
+     * Sign Up
+     * @param data The data for the request.
+     * @param data.requestBody
+     * @returns UserDTO Successful Response
+     * @throws ApiError
+     */
+    public static signUpApiSignUpPost(data: SignUpApiSignUpPostData): CancelablePromise<SignUpApiSignUpPostResponse> {
+        return __request(OpenAPI, {
+            method: 'POST',
+            url: '/api/sign_up',
+            body: data.requestBody,
+            mediaType: 'application/json',
+            errors: {
+                422: 'Validation Error'
+            }
+        });
+    }
+    
+    /**
+     * Sign In
+     * @param data The data for the request.
+     * @param data.formData
+     * @returns Token Successful Response
+     * @throws ApiError
+     */
+    public static signInApiSignInPost(data: SignInApiSignInPostData): CancelablePromise<SignInApiSignInPostResponse> {
+        return __request(OpenAPI, {
+            method: 'POST',
+            url: '/api/sign_in',
+            formData: data.formData,
+            mediaType: 'application/x-www-form-urlencoded',
+            errors: {
+                422: 'Validation Error'
+            }
+        });
+    }
+    
+    /**
+     * Get Me
+     * @returns UserDTO Successful Response
+     * @throws ApiError
+     */
+    public static getMeApiUserMeGet(): CancelablePromise<GetMeApiUserMeGetResponse> {
+        return __request(OpenAPI, {
+            method: 'GET',
+            url: '/api/user/me'
         });
     }
     

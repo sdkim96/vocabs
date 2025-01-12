@@ -1,7 +1,10 @@
 from .auth import (
     User, 
     Token, 
-    UserDTO
+    Payload,
+    UserDTO,
+    UserCreate,
+    UserSignIn,
 )
 from .problem import (
     Problem,
@@ -43,5 +46,8 @@ __all__ =[
     'PaperStore',
     'PostSubmitResponse',
     'QA',
-    'UserDTO'
+    'UserDTO',
+    'UserCreate',
+    'UserSignIn',
+    'Payload'
 ]

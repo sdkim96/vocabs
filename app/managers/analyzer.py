@@ -28,8 +28,20 @@ class TestAnalyzer:
         self.user = user
         self.paper = paper
     
+    def analyze(self, papers: List[Paper]):
+        """ 문제지의 시퀀스를 분석함 """
+        
+        for paper in papers:
+            owner = paper.get_owner_name()
+            score = paper.calculate_score()
+
+            print(f"{owner}의 점수는 {score}점 입니다.")
+        
+        return papers
+
+
     def get_papers_by_user(self) -> List[Paper]:
-        """ 학생이 푼 문제지들을 가져옴 """
+        """ 같은 학생이 푼 서로다른 문제지들을 가져옴 """
 
         with self.db_session as session:
             stmt = (
