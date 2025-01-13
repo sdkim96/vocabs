@@ -14,19 +14,16 @@ class Evaluation(BaseModel):
     score: int
     total: int
     percentage: float
+    
 
 class TestAnalyzer:
 
     def __init__(
         self,
         db_session: Session,
-        user: User,
-        paper: Paper
     ) -> None:
         
         self.db_session = db_session
-        self.user = user
-        self.paper = paper
     
     def analyze(self, papers: List[Paper]):
         """ 문제지의 시퀀스를 분석함 """
@@ -40,32 +37,30 @@ class TestAnalyzer:
         return papers
 
 
-    def get_papers_by_user(self) -> List[Paper]:
+    def get_papers_by_user(self, user: User) -> List[Paper]:
         """ 같은 학생이 푼 서로다른 문제지들을 가져옴 """
 
-        with self.db_session as session:
-            stmt = (
-                select(PaperStore.value)
-                .where(PaperStore.prefix == str(self.user.id))
+        namespace = (user.id,)
+        papers_from_paperstore = PaperStore.search(self.db_session, namespace)
+
+        papers = []
+        for paper in papers_from_paperstore:
+            casted = (
+                Paper
+                .model_validate(paper.value)
+                .model_validate_to_end()
             )
-            papers = session.exec(stmt).fetchall()
+            papers.append(casted)
         
-        user_papers = []
-        for paper in papers:
-            casted = Paper.model_validate(paper)
-            casted.model_validate_to_end()
+        return papers
 
-            user_papers.append(casted)
-        
-        return user_papers
-
-    def get_papers_by_paper(self) -> List[Paper]:
+    def get_papers_by_paper(self, paper: Paper) -> List[Paper]:
         """ 같은 문제지들을 가져옴"""
         
         with self.db_session as session:
             stmt = (
                 select(PaperStore.value)
-                .where(PaperStore.key == str(self.paper.id))
+                .where(PaperStore.key == str(paper.id))
             )
             papers = session.exec(stmt).fetchall()
         

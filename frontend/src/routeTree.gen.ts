@@ -15,6 +15,9 @@ import { Route as LoginImport } from './routes/login'
 import { Route as HomeImport } from './routes/home'
 import { Route as LayoutImport } from './routes/_layout'
 import { Route as LayoutIndexImport } from './routes/_layout/index'
+import { Route as LayoutSubmitImport } from './routes/_layout/submit'
+import { Route as LayoutResultImport } from './routes/_layout/result'
+import { Route as LayoutPaperImport } from './routes/_layout/paper'
 
 // Create/Update Routes
 
@@ -38,6 +41,21 @@ const LayoutIndexRoute = LayoutIndexImport.update({
   getParentRoute: () => LayoutRoute,
 } as any)
 
+const LayoutSubmitRoute = LayoutSubmitImport.update({
+  path: '/submit',
+  getParentRoute: () => LayoutRoute,
+} as any)
+
+const LayoutResultRoute = LayoutResultImport.update({
+  path: '/result',
+  getParentRoute: () => LayoutRoute,
+} as any)
+
+const LayoutPaperRoute = LayoutPaperImport.update({
+  path: '/paper',
+  getParentRoute: () => LayoutRoute,
+} as any)
+
 // Populate the FileRoutesByPath interface
 
 declare module '@tanstack/react-router' {
@@ -54,6 +72,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LoginImport
       parentRoute: typeof rootRoute
     }
+    '/_layout/paper': {
+      preLoaderRoute: typeof LayoutPaperImport
+      parentRoute: typeof LayoutImport
+    }
+    '/_layout/result': {
+      preLoaderRoute: typeof LayoutResultImport
+      parentRoute: typeof LayoutImport
+    }
+    '/_layout/submit': {
+      preLoaderRoute: typeof LayoutSubmitImport
+      parentRoute: typeof LayoutImport
+    }
     '/_layout/': {
       preLoaderRoute: typeof LayoutIndexImport
       parentRoute: typeof LayoutImport
@@ -64,7 +94,12 @@ declare module '@tanstack/react-router' {
 // Create and export the route tree
 
 export const routeTree = rootRoute.addChildren([
-  LayoutRoute.addChildren([LayoutIndexRoute]),
+  LayoutRoute.addChildren([
+    LayoutPaperRoute,
+    LayoutResultRoute,
+    LayoutSubmitRoute,
+    LayoutIndexRoute,
+  ]),
   HomeRoute,
   LoginRoute,
 ])

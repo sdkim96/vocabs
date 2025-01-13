@@ -26,7 +26,8 @@ from .enum import (
 )
 from .api import (
     GetPaperResponse,
-    PostSubmitResponse
+    PostSubmitResponse,
+    GetResultResponse
 )
 
 __all__ =[
@@ -49,5 +50,6 @@ __all__ =[
     'UserDTO',
     'UserCreate',
     'UserSignIn',
-    'Payload'
+    'Payload',
+    'GetResultResponse',
 ]

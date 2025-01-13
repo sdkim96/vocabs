@@ -25,6 +25,7 @@ class UserSignIn(BaseModel):
 class UserDTO(BaseModel):
     id: uuid.UUID = Field(default_factory=uuid.uuid4)
     name: str = "admin"
+    user_type: UType = UType.STUDENT
 
 class User(SQLModel, table=True):
 
@@ -61,6 +62,15 @@ class User(SQLModel, table=True):
         except Exception as e:
             print("유저 정보 조회중 오류남: ", e)
             return None
+        
+    @classmethod
+    def get_by_id(cls, db: Session, id: uuid.UUID):
+        try:
+            stmt = select(cls).where(cls.id == id)
+            return db.exec(stmt).first()
+        except Exception as e:
+            print("유저 정보 조회중 오류남: ", e)
+            return
         
 
     def verify(self, password: str):

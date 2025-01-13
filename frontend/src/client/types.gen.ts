@@ -17,14 +17,39 @@ export type Body_sign_in_api_sign_in_post = {
     client_secret?: (string | null);
 };
 
+export type Candidate = {
+    id?: number;
+    u_id?: string;
+    text: Text;
+    answer?: boolean;
+    checked?: boolean;
+};
+
+export type Difficulty = 'easy' | 'moderate' | 'hard';
+
 export type GetPaperResponse = {
     request_id?: string;
     status?: APIStatus;
     paper: TestPaper_Output;
 };
 
+export type GetResultResponse = {
+    request_id?: string;
+    status?: APIStatus;
+    papers: Array<Paper>;
+};
+
 export type HTTPValidationError = {
     detail?: Array<ValidationError>;
+};
+
+export type Paper = {
+    id?: string;
+    binded: UserDTO;
+    answer_map: {
+        [key: string]: unknown;
+    };
+    problems: Array<Problem>;
 };
 
 export type PostSubmitResponse = {
@@ -34,15 +59,36 @@ export type PostSubmitResponse = {
     user: UserDTO;
 };
 
+/**
+ * problem.question: Question()
+ * - question.u_id는 problem.u_id과 같은 값
+ * problem.answer: Answer()
+ * - answer.u_id는 candidate.u_id와 같은 값
+ */
+export type Problem = {
+    id: number;
+    u_id?: string;
+    difficulty?: Difficulty;
+    question_type?: QType;
+    candidates: Array<Candidate>;
+};
+
 export type QA = {
     question: Question;
     answers: Array<Answer>;
 };
 
+/**
+ * Korean -> 질문 한국어, 답변 영어
+ */
+export type QType = 'korean' | 'english';
+
 export type Question = {
     u_id?: string;
     content: string;
 };
+
+export type Tag = 'noun' | 'pronoun' | 'verb' | 'adjective' | 'adverb' | 'preposition' | 'conjunction' | 'interjection' | 'undecided';
 
 export type TestPaper_Input = {
     paper_id?: string;
@@ -56,6 +102,13 @@ export type TestPaper_Output = {
     test_id?: string;
     binded: UserDTO;
     q_a_set: Array<QA>;
+};
+
+export type Text = {
+    id: number;
+    name: string;
+    tag?: Tag;
+    k_description: string;
 };
 
 export type Token = {
@@ -72,6 +125,7 @@ export type UserCreate = {
 export type UserDTO = {
     id?: string;
     name?: string;
+    user_type?: UType;
 };
 
 export type UType = 'student' | 'teacher' | 'guest' | 'admin';
@@ -90,7 +144,13 @@ export type SubmitPaperApiSubmitPostData = {
 
 export type SubmitPaperApiSubmitPostResponse = (PostSubmitResponse);
 
-export type AnalyzeApiAnalysisGetResponse = (PostSubmitResponse);
+export type AnalyzeMeApiResultMeGetResponse = (GetResultResponse);
+
+export type AnalyzeStudentApiResultGetData = {
+    studentId: string;
+};
+
+export type AnalyzeStudentApiResultGetResponse = (GetResultResponse);
 
 export type SignUpApiSignUpPostData = {
     requestBody: UserCreate;

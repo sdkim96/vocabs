@@ -3,7 +3,7 @@
 import type { CancelablePromise } from './core/CancelablePromise';
 import { OpenAPI } from './core/OpenAPI';
 import { request as __request } from './core/request';
-import type { GetPaperApiPaperGetResponse, SubmitPaperApiSubmitPostData, SubmitPaperApiSubmitPostResponse, AnalyzeApiAnalysisGetResponse, SignUpApiSignUpPostData, SignUpApiSignUpPostResponse, SignInApiSignInPostData, SignInApiSignInPostResponse, GetMeApiUserMeGetResponse } from './types.gen';
+import type { GetPaperApiPaperGetResponse, SubmitPaperApiSubmitPostData, SubmitPaperApiSubmitPostResponse, AnalyzeMeApiResultMeGetResponse, AnalyzeStudentApiResultGetData, AnalyzeStudentApiResultGetResponse, SignUpApiSignUpPostData, SignUpApiSignUpPostResponse, SignInApiSignInPostData, SignInApiSignInPostResponse, GetMeApiUserMeGetResponse } from './types.gen';
 
 export class DefaultService {
     /**
@@ -38,14 +38,34 @@ export class DefaultService {
     }
     
     /**
-     * Analyze
-     * @returns PostSubmitResponse Successful Response
+     * Analyze Me
+     * @returns GetResultResponse Successful Response
      * @throws ApiError
      */
-    public static analyzeApiAnalysisGet(): CancelablePromise<AnalyzeApiAnalysisGetResponse> {
+    public static analyzeMeApiResultMeGet(): CancelablePromise<AnalyzeMeApiResultMeGetResponse> {
         return __request(OpenAPI, {
             method: 'GET',
-            url: '/api/analysis'
+            url: '/api/result/me'
+        });
+    }
+    
+    /**
+     * Analyze Student
+     * @param data The data for the request.
+     * @param data.studentId
+     * @returns GetResultResponse Successful Response
+     * @throws ApiError
+     */
+    public static analyzeStudentApiResultGet(data: AnalyzeStudentApiResultGetData): CancelablePromise<AnalyzeStudentApiResultGetResponse> {
+        return __request(OpenAPI, {
+            method: 'GET',
+            url: '/api/result',
+            query: {
+                student_id: data.studentId
+            },
+            errors: {
+                422: 'Validation Error'
+            }
         });
     }
     

@@ -58,7 +58,7 @@ const Sidebar: React.FC = () => {
               </Box>
               {currentUser?.name && (
                 <Text color={textColor} noOfLines={2} fontSize="sm" p={2}>
-                  Logged in as: {currentUser?.name}
+                  {currentUser?.name} 님, 안녕하세요!
                 </Text>
               )}
             </Flex>
@@ -94,7 +94,7 @@ const Sidebar: React.FC = () => {
               p={2}
               maxW="180px"
             >
-              Logged in as: {currentUser?.name}
+              {currentUser?.name}  님, 안녕하세요!
             </Text>
           )}
         </Flex>

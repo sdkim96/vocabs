@@ -1,6 +1,6 @@
 import uuid
 from typing import Annotated
-from fastapi import FastAPI, HTTPException, Depends
+from fastapi import FastAPI, HTTPException, Depends, Query
 from fastapi.security import OAuth2PasswordRequestForm
 from starlette.middleware.cors import CORSMiddleware
 
@@ -8,27 +8,23 @@ from app.core.config import settings
 
 from app.factory.problem import ProblemFactory
 from app.managers.test_manager import TestManager
+from app.managers.analyzer import TestAnalyzer
 from app.schemas import (
     TestPaper,  
     PaperStore, 
     UserDTO,
     UserCreate, 
     User,
-    UserSignIn,
-    Paper, 
+    Paper,
+    UType,
 
     GetPaperResponse,
     PostSubmitResponse,
-    Token
+    Token,
+    GetResultResponse
 )
 
 from app.deps import Session, get_db, get_current_user
-
-admin = UserDTO(
-    id=uuid.UUID("949ac3fa-7967-43e2-8029-dd14a03ac8cd"), 
-    name="admin"
-)
-
 
 app = FastAPI(
     title=settings.PROJECT_NAME,
@@ -47,9 +43,9 @@ if settings.all_cors_origins:
 
 
 @app.get("/api/paper", response_model=GetPaperResponse)
-async def get_paper(user: User = Depends(get_current_user), db: Session = Depends(get_db)):
+async def get_paper(me: User = Depends(get_current_user), db: Session = Depends(get_db)):
     
-    this_user = UserDTO(id=user.id, name=user.name)
+    this_user = UserDTO(id=me.id, name=me.name)
     at_factory = ProblemFactory(db_session=db)
     published_version = (
         TestManager(user=this_user)
@@ -69,7 +65,7 @@ async def get_paper(user: User = Depends(get_current_user), db: Session = Depend
 
 
 @app.post("/api/submit", response_model=PostSubmitResponse)
-async def submit_paper(test_paper: TestPaper, user: User = Depends(get_current_user), db: Session = Depends(get_db)):
+async def submit_paper(test_paper: TestPaper, me: User = Depends(get_current_user), db: Session = Depends(get_db)):
  
     namespace = (test_paper.binded.id, test_paper.paper_id)
     
@@ -95,12 +91,49 @@ async def submit_paper(test_paper: TestPaper, user: User = Depends(get_current_u
         user=changed_paper.binded
     )
 
+@app.get("/api/result/specific", response_model=GetPaperResponse)
+async def get_result_of_paer(
+    paper_id: Annotated[uuid.UUID, Query()], 
+    me: User = Depends(get_current_user), 
+    db: Session = Depends(get_db)
+):
+    namespace = (me.id, paper_id)
 
-@app.get("/api/analysis", response_model=PostSubmitResponse)
-async def analyze(user: User = Depends(get_current_user), db: Session = Depends(get_db)):
+
+@app.get("/api/result/me", response_model=GetResultResponse)
+async def analyze_me(
+    me: User = Depends(get_current_user), 
+    db: Session = Depends(get_db),
+):
     
-    searched = PaperStore.search(db, namespace=(user.id,))
-    print(searched)
+    analyzer = TestAnalyzer(db)
+    papers = analyzer.get_papers_by_user(me)
+
+    return GetResultResponse(
+        papers=papers
+    )
+
+
+
+@app.get("/api/result", response_model=GetResultResponse)
+async def analyze_student(
+    student_id: Annotated[uuid.UUID, Query()], 
+    my: User = Depends(get_current_user), 
+    db: Session = Depends(get_db)
+):
+    if my.user_type not in [UType.TEACHER, UType.ADMIN]:
+        raise HTTPException(status_code=403, detail="You are not a teacher")
+    
+    student = User.get_by_id(db, student_id)
+    if not student:
+        raise HTTPException(status_code=404, detail="Student not found")
+    
+    analyzer = TestAnalyzer(db)
+    papers = analyzer.get_papers_by_user(student)
+
+    return GetResultResponse(
+        papers=papers
+    )
 
 
 @app.post("/api/sign_up", response_model=UserDTO)
@@ -108,7 +141,7 @@ async def sign_up(new_user: UserCreate, db: Session = Depends(get_db)):
     
     created = User.create(db, user=new_user)
     if created:
-        return UserDTO(id=created.id, name=created.name)
+        return UserDTO(id=created.id, name=created.name, user_type=created.user_type)
     
 @app.post("/api/sign_in", response_model=Token)
 async def sign_in(form_data: Annotated[OAuth2PasswordRequestForm, Depends()], db: Session = Depends(get_db)):
@@ -126,5 +159,5 @@ async def sign_in(form_data: Annotated[OAuth2PasswordRequestForm, Depends()], db
 
 
 @app.get("/api/user/me", response_model=UserDTO)
-async def get_me(user: User = Depends(get_current_user)):
-    return UserDTO(id=user.id, name=user.name)
+async def get_me(me: User = Depends(get_current_user)):
+    return UserDTO(id=me.id, name=me.name, user_type=me.user_type)

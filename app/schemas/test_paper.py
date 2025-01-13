@@ -48,7 +48,7 @@ class PaperStore(SQLModel, table=True):
         cls,
         db: Session,
         namespace: Tuple[Any, ...]
-    ) -> List[Dict]:
+    ) -> List["PaperStore"]:
         """ """
         try:
             prefix_pattern = "%"+ ".".join(map(str, namespace)) + "%"
@@ -191,6 +191,7 @@ class Paper(BaseModel):
     def get_owner_name(self) -> str:
         """ 하나의 시험용지에 바인딩된 유저의 이름: str 을 리턴합니다."""
         return self.binded.name
+
     
 class TestPaper(BaseModel):
     paper_id: uuid.UUID = Field(default_factory=uuid.uuid4)
