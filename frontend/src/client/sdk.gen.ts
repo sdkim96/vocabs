@@ -3,12 +3,12 @@
 import type { CancelablePromise } from './core/CancelablePromise';
 import { OpenAPI } from './core/OpenAPI';
 import { request as __request } from './core/request';
-import type { GetPaperApiPaperGetResponse, SubmitPaperApiSubmitPostData, SubmitPaperApiSubmitPostResponse, AnalyzeMeApiResultMeGetResponse, AnalyzeStudentApiResultGetData, AnalyzeStudentApiResultGetResponse, SignUpApiSignUpPostData, SignUpApiSignUpPostResponse, SignInApiSignInPostData, SignInApiSignInPostResponse, GetMeApiUserMeGetResponse } from './types.gen';
+import type { GetPaperApiPaperGetResponse, SubmitPaperApiSubmitPostData, SubmitPaperApiSubmitPostResponse, GetResultOfPaerApiResultSpecificGetData, GetResultOfPaerApiResultSpecificGetResponse, GetMyResultOnlyMetaApiResultMetaMeGetResponse, GetStudentResultOnlyMetaApiResultMetaGetData, GetStudentResultOnlyMetaApiResultMetaGetResponse, GetStudentsApiStudentsGetResponse, SignUpApiSignUpPostData, SignUpApiSignUpPostResponse, SignInApiSignInPostData, SignInApiSignInPostResponse, GetMeApiUserMeGetResponse } from './types.gen';
 
 export class DefaultService {
     /**
      * Get Paper
-     * @returns GetPaperResponse Successful Response
+     * @returns GetTestPaperResponse Successful Response
      * @throws ApiError
      */
     public static getPaperApiPaperGet(): CancelablePromise<GetPaperApiPaperGetResponse> {
@@ -38,34 +38,68 @@ export class DefaultService {
     }
     
     /**
-     * Analyze Me
-     * @returns GetResultResponse Successful Response
+     * Get Result Of Paer
+     * @param data The data for the request.
+     * @param data.paperId
+     * @param data.testId
+     * @returns GetPaperResponse Successful Response
      * @throws ApiError
      */
-    public static analyzeMeApiResultMeGet(): CancelablePromise<AnalyzeMeApiResultMeGetResponse> {
+    public static getResultOfPaerApiResultSpecificGet(data: GetResultOfPaerApiResultSpecificGetData): CancelablePromise<GetResultOfPaerApiResultSpecificGetResponse> {
         return __request(OpenAPI, {
             method: 'GET',
-            url: '/api/result/me'
+            url: '/api/result/specific',
+            query: {
+                paper_id: data.paperId,
+                test_id: data.testId
+            },
+            errors: {
+                422: 'Validation Error'
+            }
         });
     }
     
     /**
-     * Analyze Student
+     * Get My Result Only Meta
+     * @returns GetResultResponse Successful Response
+     * @throws ApiError
+     */
+    public static getMyResultOnlyMetaApiResultMetaMeGet(): CancelablePromise<GetMyResultOnlyMetaApiResultMetaMeGetResponse> {
+        return __request(OpenAPI, {
+            method: 'GET',
+            url: '/api/result/meta/me'
+        });
+    }
+    
+    /**
+     * Get Student Result Only Meta
      * @param data The data for the request.
      * @param data.studentId
      * @returns GetResultResponse Successful Response
      * @throws ApiError
      */
-    public static analyzeStudentApiResultGet(data: AnalyzeStudentApiResultGetData): CancelablePromise<AnalyzeStudentApiResultGetResponse> {
+    public static getStudentResultOnlyMetaApiResultMetaGet(data: GetStudentResultOnlyMetaApiResultMetaGetData): CancelablePromise<GetStudentResultOnlyMetaApiResultMetaGetResponse> {
         return __request(OpenAPI, {
             method: 'GET',
-            url: '/api/result',
+            url: '/api/result/meta',
             query: {
                 student_id: data.studentId
             },
             errors: {
                 422: 'Validation Error'
             }
+        });
+    }
+    
+    /**
+     * Get Students
+     * @returns GetStudentsResponse Successful Response
+     * @throws ApiError
+     */
+    public static getStudentsApiStudentsGet(): CancelablePromise<GetStudentsApiStudentsGetResponse> {
+        return __request(OpenAPI, {
+            method: 'GET',
+            url: '/api/students'
         });
     }
     

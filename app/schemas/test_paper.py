@@ -13,7 +13,7 @@ from pydantic import BaseModel, Field
 from sqlmodel import SQLModel, Session, select, Field as SQLModelField
 from sqlalchemy.dialects.postgresql import JSONB
 
-from app.schemas.enum import Difficulty
+from app.schemas.enum import Difficulty, StoreSearchOption
 from app.schemas.problem import Problem, QA, Text
 from app.schemas.auth import User, UserDTO
 
@@ -47,19 +47,17 @@ class PaperStore(SQLModel, table=True):
     def search(
         cls,
         db: Session,
-        namespace: Tuple[Any, ...]
-    ) -> List["PaperStore"]:
+        namespace: Tuple[Any, ...],
+        search_option: StoreSearchOption = StoreSearchOption.ALL
+    ) -> List["PaperStore"] | List["Paper"] | List["PaperMeta"]:
         """ """
-        try:
-            prefix_pattern = "%"+ ".".join(map(str, namespace)) + "%"
-            stmt = (
-                select(cls)
-                .where(cls.prefix.like(prefix_pattern)) # type: ignore
-            )
-            return db.exec(stmt).all() # type: ignore
-            
-        except Exception as e:
-            raise e
+        match search_option:
+            case StoreSearchOption.ALL:
+                return cls._search_all(db, namespace)
+            case StoreSearchOption.META:
+                return cls._search_only_meta(db, namespace)
+            case StoreSearchOption.VALUE:
+                return cls._search_only_value(db, namespace)
     
 
     @classmethod
@@ -116,6 +114,82 @@ class PaperStore(SQLModel, table=True):
         except Exception as e:
             db.rollback()
             raise e
+        
+
+    @classmethod
+    def _search_all(
+        cls,
+        db: Session,
+        namespace: Tuple[Any, ...]
+    ) -> List["PaperStore"]:
+        """ """
+        try:
+            prefix_pattern = "%"+ ".".join(map(str, namespace)) + "%"
+            stmt = (
+                select(cls)
+                .where(cls.prefix.like(prefix_pattern)) # type: ignore
+            )
+            return db.exec(stmt).all() # type: ignore
+            
+        except Exception as e:
+            raise e
+    
+
+    @classmethod
+    def _search_only_value(
+        cls,
+        db: Session,
+        namespace: Tuple[Any, ...]
+    ) -> List["Paper"]:
+        """ """
+        try:
+            prefix_pattern = "%"+ ".".join(map(str, namespace)) + "%"
+            stmt = (
+                select(cls.value)
+                .where(cls.prefix.like(prefix_pattern)) # type: ignore
+            )
+            dictionary = db.exec(stmt).all() # type: ignore
+            return [
+                Paper.model_validate(dic).model_validate_to_end() 
+                for dic in dictionary
+            ]
+            
+        except Exception as e:
+            raise
+
+    @classmethod
+    def _search_only_meta(
+        cls,
+        db: Session,
+        namespace: Tuple[Any, ...]
+    ) -> List["PaperMeta"]:
+        """ """
+        try:
+            prefix_pattern = "%"+ ".".join(map(str, namespace)) + "%"
+            stmt = (
+                select(cls.prefix, cls.key, cls.created_at, cls.updated_at)
+                .where(cls.prefix.like(prefix_pattern)) # type: ignore
+            )
+            tupled = db.exec(stmt).all() # type: ignore
+            return [
+                PaperMeta(
+                    paper_id=tp[0].split(".")[-1],
+                    test_id=tp[1],
+                    created_at=tp[2] if tp[2] is not None else datetime.now(),
+                    updated_at=tp[3] if tp[3] is not None else datetime.now()
+                )
+                for tp in tupled
+            ]
+            
+        except Exception as e:
+            raise e
+
+class PaperMeta(BaseModel):
+    paper_id: str
+    test_id: str
+    created_at: datetime
+    updated_at: datetime
+
 
 class Paper(BaseModel):
     id: uuid.UUID = Field(default_factory=uuid.uuid4)
@@ -219,5 +293,12 @@ class TestPaper(BaseModel):
     
 
 if __name__ == "__main__":
-    from app.core.db import engine
-    SQLModel.metadata.create_all(engine)
+    from app.deps import get_db
+
+    db = next(get_db())
+
+    searched_all = PaperStore.search(db, (uuid.UUID("d3f76749-388e-40ee-9e26-8bca71fa04e7"),))
+    searched_meta = PaperStore.search(db, (uuid.UUID("d3f76749-388e-40ee-9e26-8bca71fa04e7"),), StoreSearchOption.META)
+    searched_value = PaperStore.search(db, (uuid.UUID("d3f76749-388e-40ee-9e26-8bca71fa04e7"),), StoreSearchOption.VALUE)
+
+    print(searched_all)

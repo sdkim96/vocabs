@@ -4,9 +4,9 @@ import { Link } from "@tanstack/react-router";
 
 const SidebarItems: React.FC<{ onClose?: () => void }> = ({ onClose }) => {
   const items = [
-    { title: "문제 생성", path: "/paper" }, // 문제 조회와 제출
-    { title: "분석 결과", path: "/result" }, // /api/analysis
     { title: "내 정보", path: "/" }, // /api/user/me
+    { title: "분석 결과", path: "/result" }, // /api/analysis
+    { title: "문제 생성", path: "/paper" }, // 문제 조회와 제출
   ];
 
   const textColor = "black"; // 텍스트 색상

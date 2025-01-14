@@ -30,13 +30,25 @@ export type Difficulty = 'easy' | 'moderate' | 'hard';
 export type GetPaperResponse = {
     request_id?: string;
     status?: APIStatus;
-    paper: TestPaper_Output;
+    paper: Paper;
 };
 
 export type GetResultResponse = {
     request_id?: string;
     status?: APIStatus;
-    papers: Array<Paper>;
+    papers: Array<PaperMeta>;
+};
+
+export type GetStudentsResponse = {
+    request_id?: string;
+    status?: APIStatus;
+    students: Array<UserDTO>;
+};
+
+export type GetTestPaperResponse = {
+    request_id?: string;
+    status?: APIStatus;
+    paper: TestPaper_Output;
 };
 
 export type HTTPValidationError = {
@@ -50,6 +62,13 @@ export type Paper = {
         [key: string]: unknown;
     };
     problems: Array<Problem>;
+};
+
+export type PaperMeta = {
+    paper_id: string;
+    test_id: string;
+    created_at: string;
+    updated_at: string;
 };
 
 export type PostSubmitResponse = {
@@ -136,7 +155,7 @@ export type ValidationError = {
     type: string;
 };
 
-export type GetPaperApiPaperGetResponse = (GetPaperResponse);
+export type GetPaperApiPaperGetResponse = (GetTestPaperResponse);
 
 export type SubmitPaperApiSubmitPostData = {
     requestBody: TestPaper_Input;
@@ -144,13 +163,22 @@ export type SubmitPaperApiSubmitPostData = {
 
 export type SubmitPaperApiSubmitPostResponse = (PostSubmitResponse);
 
-export type AnalyzeMeApiResultMeGetResponse = (GetResultResponse);
+export type GetResultOfPaerApiResultSpecificGetData = {
+    paperId: string;
+    testId: string;
+};
 
-export type AnalyzeStudentApiResultGetData = {
+export type GetResultOfPaerApiResultSpecificGetResponse = (GetPaperResponse);
+
+export type GetMyResultOnlyMetaApiResultMetaMeGetResponse = (GetResultResponse);
+
+export type GetStudentResultOnlyMetaApiResultMetaGetData = {
     studentId: string;
 };
 
-export type AnalyzeStudentApiResultGetResponse = (GetResultResponse);
+export type GetStudentResultOnlyMetaApiResultMetaGetResponse = (GetResultResponse);
+
+export type GetStudentsApiStudentsGetResponse = (GetStudentsResponse);
 
 export type SignUpApiSignUpPostData = {
     requestBody: UserCreate;

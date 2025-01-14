@@ -37,6 +37,15 @@ class User(SQLModel, table=True):
     user_type: UType = SQLModelField(default=UType.GUEST)
 
     @classmethod
+    def get_all(cls, db: Session):
+        try:
+            stmt = select(cls)
+            return db.exec(stmt).all()
+        except Exception as e:
+            print("유저 정보 조회중 오류남: ", e)
+            return None
+
+    @classmethod
     def create(cls, db: Session, user: UserCreate):
         hashed = encoder.hash(user.password+settings.PEPPER)
         try:

@@ -5,6 +5,7 @@ from .auth import (
     UserDTO,
     UserCreate,
     UserSignIn,
+    
 )
 from .problem import (
     Problem,
@@ -15,19 +16,23 @@ from .problem import (
 from .test_paper import (
     Paper,
     TestPaper,
-    PaperStore
+    PaperStore,
+    PaperMeta
 )
 from .enum import (
     UType,
     QType,
     Difficulty,
     Tag,
-    APIStatus
+    APIStatus,
+    StoreSearchOption,
 )
 from .api import (
     GetPaperResponse,
     PostSubmitResponse,
-    GetResultResponse
+    GetResultResponse,
+    GetStudentsResponse,
+    GetTestPaperResponse,
 )
 
 __all__ =[
@@ -52,4 +57,8 @@ __all__ =[
     'UserSignIn',
     'Payload',
     'GetResultResponse',
+    'StoreSearchOption',
+    'PaperMeta',
+    'GetStudentsResponse',
+    'GetTestPaperResponse',
 ]

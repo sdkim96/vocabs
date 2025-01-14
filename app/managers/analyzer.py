@@ -14,7 +14,7 @@ class Evaluation(BaseModel):
     score: int
     total: int
     percentage: float
-    
+
 
 class TestAnalyzer:
 
@@ -35,43 +35,7 @@ class TestAnalyzer:
             print(f"{owner}의 점수는 {score}점 입니다.")
         
         return papers
-
-
-    def get_papers_by_user(self, user: User) -> List[Paper]:
-        """ 같은 학생이 푼 서로다른 문제지들을 가져옴 """
-
-        namespace = (user.id,)
-        papers_from_paperstore = PaperStore.search(self.db_session, namespace)
-
-        papers = []
-        for paper in papers_from_paperstore:
-            casted = (
-                Paper
-                .model_validate(paper.value)
-                .model_validate_to_end()
-            )
-            papers.append(casted)
-        
-        return papers
-
-    def get_papers_by_paper(self, paper: Paper) -> List[Paper]:
-        """ 같은 문제지들을 가져옴"""
-        
-        with self.db_session as session:
-            stmt = (
-                select(PaperStore.value)
-                .where(PaperStore.key == str(paper.id))
-            )
-            papers = session.exec(stmt).fetchall()
-        
-        same_papers = []
-        for paper in papers: # type: ignore
-            casted = Paper.model_validate(paper)
-            casted.model_validate_to_end()
-
-            same_papers.append(casted)
-
-        return same_papers
+    
     
     def evaluate(self) -> Evaluation:
         """ 학생을 평가함"""

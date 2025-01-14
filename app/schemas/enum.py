@@ -32,3 +32,9 @@ class APIStatus(Enum):
     SUCCESS = 20000
     FAIL = 50001
     ERROR = 50000
+
+
+class StoreSearchOption(Enum):
+    ALL = 'all'
+    META = 'meta'
+    VALUE = 'value'
