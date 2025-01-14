@@ -16,15 +16,16 @@ encoder = PasswordHasher()
 class UserCreate(BaseModel):
     name: str
     password: str
-    user_type: UType = UType.STUDENT
 
-class UserSignIn(BaseModel):
-    name: str
-    password: str
+    user_name: str = "김성동"
+    user_nickname: str = "김성동"
 
 class UserDTO(BaseModel):
     id: uuid.UUID = Field(default_factory=uuid.uuid4)
     name: str = "admin"
+
+    user_name: str = "김성동"
+    user_nickname: str = "김성동"
     user_type: UType = UType.STUDENT
 
 class User(SQLModel, table=True):
@@ -34,6 +35,9 @@ class User(SQLModel, table=True):
     id: uuid.UUID = SQLModelField(default_factory=uuid.uuid4, primary_key=True)  # 기본 키로 설정
     name: str = SQLModelField(default="admin")
     password: str = SQLModelField(default="aaaa")
+    
+    user_name: str = SQLModelField(default="김성동")
+    user_nickname: str = SQLModelField(default="김성동")
     user_type: UType = SQLModelField(default=UType.GUEST)
 
     @classmethod
@@ -47,13 +51,25 @@ class User(SQLModel, table=True):
 
     @classmethod
     def create(cls, db: Session, user: UserCreate):
+        
+        try:
+            exist = cls.get(db, user.name)
+            if exist:
+                return None
+        except Exception as e:
+            print("유저 중복 확인중 오류남: ", e)
+            return None
+        
         hashed = encoder.hash(user.password+settings.PEPPER)
+
         try:
             new_record = cls(
                 id=uuid.uuid4(),
                 name=user.name,
-                user_type=user.user_type,
-                password=hashed
+                password=hashed,
+                user_name=user.user_name,
+                user_nickname=user.user_nickname,
+                user_type=UType.STUDENT
             )
             db.add(new_record)
             db.commit()

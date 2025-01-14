@@ -15,9 +15,9 @@ from app.factory.problem import ProblemFactory
 class Publisher:
     
     def __init__(
-        self,
+        self,        
+        target_user: UserDTO = UserDTO(),
         request_key: uuid.UUID = uuid.uuid4(),
-        target_user: UserDTO = UserDTO()
         
     ) -> None:
         

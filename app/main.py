@@ -48,7 +48,12 @@ if settings.all_cors_origins:
 @app.get("/api/paper", response_model=GetTestPaperResponse)
 async def get_paper(me: User = Depends(get_current_user), db: Session = Depends(get_db)):
     
-    this_user = UserDTO(id=me.id, name=me.name)
+    this_user = UserDTO(
+        id=me.id, 
+        name=me.name,
+        user_name=me.user_name,
+        user_nickname=me.user_nickname,
+    )
     at_factory = ProblemFactory(db_session=db)
     published_version = (
         Publisher(target_user=this_user)
@@ -74,7 +79,8 @@ async def submit_paper(test_paper: TestPaper, me: User = Depends(get_current_use
     
     paper_json = PaperStore.get(db, namespace, test_paper.test_id) # type: ignore
     to_published_version = (
-        Paper.model_validate(paper_json)
+        Paper
+        .model_validate(paper_json)
         .model_validate_to_end()
     )
     changed_paper = test_paper.apply_changes(to_published_version)
@@ -166,8 +172,15 @@ async def sign_up(new_user: UserCreate, db: Session = Depends(get_db)):
     
     created = User.create(db, user=new_user)
     if created:
-        return UserDTO(id=created.id, name=created.name, user_type=created.user_type)
+        return UserDTO(
+            id=created.id, 
+            name=created.name, 
+            user_type=created.user_type,
+            user_name=created.user_name,
+            user_nickname=created.user_nickname,
+        )
     
+    raise HTTPException(status_code=500, detail="User already exists")
 
 @app.post("/api/sign_in", response_model=Token)
 async def sign_in(user: Annotated[OAuth2PasswordRequestForm, Depends()], db: Session = Depends(get_db)):
@@ -186,4 +199,10 @@ async def sign_in(user: Annotated[OAuth2PasswordRequestForm, Depends()], db: Ses
 
 @app.get("/api/user/me", response_model=UserDTO)
 async def get_me(me: User = Depends(get_current_user)):
-    return UserDTO(id=me.id, name=me.name, user_type=me.user_type)
+    return UserDTO(
+        id=me.id, 
+        name=me.name, 
+        user_type=me.user_type,
+        user_name=me.user_name,
+        user_nickname=me.user_nickname,
+    )

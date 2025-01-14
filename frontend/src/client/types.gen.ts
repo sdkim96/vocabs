@@ -138,12 +138,15 @@ export type Token = {
 export type UserCreate = {
     name: string;
     password: string;
-    user_type?: UType;
+    user_name?: string;
+    user_nickname?: string;
 };
 
 export type UserDTO = {
     id?: string;
     name?: string;
+    user_name?: string;
+    user_nickname?: string;
     user_type?: UType;
 };
 

@@ -11,23 +11,24 @@
 // Import Routes
 
 import { Route as rootRoute } from './routes/__root'
+import { Route as SignupImport } from './routes/signup'
 import { Route as LoginImport } from './routes/login'
-import { Route as HomeImport } from './routes/home'
 import { Route as LayoutImport } from './routes/_layout'
 import { Route as LayoutIndexImport } from './routes/_layout/index'
 import { Route as LayoutSubmitImport } from './routes/_layout/submit'
 import { Route as LayoutResultImport } from './routes/_layout/result'
 import { Route as LayoutPaperImport } from './routes/_layout/paper'
+import { Route as LayoutAdminImport } from './routes/_layout/admin'
 
 // Create/Update Routes
 
-const LoginRoute = LoginImport.update({
-  path: '/login',
+const SignupRoute = SignupImport.update({
+  path: '/signup',
   getParentRoute: () => rootRoute,
 } as any)
 
-const HomeRoute = HomeImport.update({
-  path: '/home',
+const LoginRoute = LoginImport.update({
+  path: '/login',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -56,6 +57,11 @@ const LayoutPaperRoute = LayoutPaperImport.update({
   getParentRoute: () => LayoutRoute,
 } as any)
 
+const LayoutAdminRoute = LayoutAdminImport.update({
+  path: '/admin',
+  getParentRoute: () => LayoutRoute,
+} as any)
+
 // Populate the FileRoutesByPath interface
 
 declare module '@tanstack/react-router' {
@@ -64,13 +70,17 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LayoutImport
       parentRoute: typeof rootRoute
     }
-    '/home': {
-      preLoaderRoute: typeof HomeImport
-      parentRoute: typeof rootRoute
-    }
     '/login': {
       preLoaderRoute: typeof LoginImport
       parentRoute: typeof rootRoute
+    }
+    '/signup': {
+      preLoaderRoute: typeof SignupImport
+      parentRoute: typeof rootRoute
+    }
+    '/_layout/admin': {
+      preLoaderRoute: typeof LayoutAdminImport
+      parentRoute: typeof LayoutImport
     }
     '/_layout/paper': {
       preLoaderRoute: typeof LayoutPaperImport
@@ -95,13 +105,14 @@ declare module '@tanstack/react-router' {
 
 export const routeTree = rootRoute.addChildren([
   LayoutRoute.addChildren([
+    LayoutAdminRoute,
     LayoutPaperRoute,
     LayoutResultRoute,
     LayoutSubmitRoute,
     LayoutIndexRoute,
   ]),
-  HomeRoute,
   LoginRoute,
+  SignupRoute,
 ])
 
 /* prettier-ignore-end */
