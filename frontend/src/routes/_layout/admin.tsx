@@ -16,7 +16,7 @@ import {
 } from "@chakra-ui/react";
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { DefaultService, PaperMeta, UserDTO } from "../../client"; // 경로는 프로젝트에 맞게 수정
+import { UsersService, PaperMeta, UserDTO, ResultsService } from "../../client"; // 경로는 프로젝트에 맞게 수정
 
 export const Route = createFileRoute("/_layout/admin")({
   component: AdminPage,
@@ -35,7 +35,7 @@ function AdminPage() {
 
   const fetchStudents = async () => {
     try {
-      const response = await DefaultService.getStudentsApiStudentsGet();
+      const response = await UsersService.getStudentsApiV1UsersStudentsGet();
       setStudents(response.students || []);
     } catch (error) {
       console.error("학생 정보를 가져오는 데 실패했습니다:", error);
@@ -52,7 +52,7 @@ function AdminPage() {
   const fetchMetaData = async (studentId: string) => {
     setLoading(true);
     try {
-      const response = await DefaultService.getStudentResultOnlyMetaApiResultMetaGet({
+      const response = await ResultsService.getStudentResultOnlyMetaApiV1ResultsMetaAllGet({
         studentId,
       });
       setMetaData(response.papers || []);

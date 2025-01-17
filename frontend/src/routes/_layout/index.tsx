@@ -1,7 +1,7 @@
 import { Box, Container, Text } from "@chakra-ui/react";
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { DefaultService } from "../../client";
+import { UsersService } from "../../client";
 
 export const Route = createFileRoute("/_layout/")({
   component: Dashboard,
@@ -13,7 +13,7 @@ function Dashboard() {
 
   useEffect(() => {
     // 현재 사용자 정보 가져오기
-    DefaultService.getMeApiUserMeGet()
+    UsersService.getMeApiV1UsersMeGet()
       .then((response) => {
         setUser(response); // 응답은 UserDTO와 일치
       })

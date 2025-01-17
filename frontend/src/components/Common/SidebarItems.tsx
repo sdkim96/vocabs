@@ -1,7 +1,7 @@
-import { Box, Flex, Text, VStack } from "@chakra-ui/react";
+import { Box, Flex, Text } from "@chakra-ui/react";
 import { Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { DefaultService } from "../../client"; // 경로는 프로젝트에 맞게 수정
+import { UsersService } from "../../client"; // 경로는 프로젝트에 맞게 수정
 
 const SidebarItems: React.FC<{ onClose?: () => void }> = ({ onClose }) => {
   const [userType, setUserType] = useState<string | null>(null);
@@ -10,7 +10,7 @@ const SidebarItems: React.FC<{ onClose?: () => void }> = ({ onClose }) => {
     // 사용자 정보 가져오기
     const fetchUserInfo = async () => {
       try {
-        const response = await DefaultService.getMeApiUserMeGet();
+        const response = await UsersService.getMeApiV1UsersMeGet();
         if (response.user_type !== undefined) {
           setUserType(response.user_type); // UserDTO의 user_type 저장
         }

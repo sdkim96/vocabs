@@ -1,7 +1,7 @@
 import { Box, Button, Container, Flex, Grid, GridItem, Text, VStack } from "@chakra-ui/react";
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { DefaultService } from "../../client"; // 경로는 프로젝트에 맞게 수정
+import { ResultsService } from "../../client"; // 경로는 프로젝트에 맞게 수정
 
 export const Route = createFileRoute("/_layout/result")({
   component: ResultAnalysis,
@@ -13,7 +13,7 @@ function ResultAnalysis() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    DefaultService.getMyResultOnlyMetaApiResultMetaMeGet()
+    ResultsService.getMyResultOnlyMetaApiV1ResultsMetaMeGet()
       .then((response) => {
         const sortedMetaData = (response.papers || []).sort(
           (a: any, b: any) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
@@ -27,7 +27,7 @@ function ResultAnalysis() {
   }, []);
 
   const fetchPaperDetails = (paperId: string, testId: string) => {
-    DefaultService.getResultOfPaerApiResultSpecificGet({ paperId, testId })
+    ResultsService.getResultOfPaerApiV1ResultsSpecificGet({ paperId, testId })
       .then((response) => {
         setSelectedPaper(response.paper || null);
       })

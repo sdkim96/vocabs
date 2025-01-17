@@ -6,7 +6,7 @@ export const Route = createFileRoute("/_layout/submit")({
 });
 
 function SubmitResult() {
-  const { score } = useSearch(); // 쿼리 파라미터에서 점수 가져오기
+  const { score } = useSearch({ select: (search) => search.score, strict: false });
 
   return (
     <Container maxW="full">

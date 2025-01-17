@@ -8,7 +8,7 @@ export type Answer = {
 
 export type APIStatus = 20000 | 50001 | 50000;
 
-export type Body_sign_in_api_sign_in_post = {
+export type Body_sign_in_api_v1_users_sign_in_post = {
     grant_type?: (string | null);
     username: string;
     password: string;
@@ -158,41 +158,41 @@ export type ValidationError = {
     type: string;
 };
 
-export type GetPaperApiPaperGetResponse = (GetTestPaperResponse);
+export type GetPaperApiV1PapersPaperGetResponse = (GetTestPaperResponse);
 
-export type SubmitPaperApiSubmitPostData = {
+export type SubmitPaperApiV1PapersSubmitPostData = {
     requestBody: TestPaper_Input;
 };
 
-export type SubmitPaperApiSubmitPostResponse = (PostSubmitResponse);
+export type SubmitPaperApiV1PapersSubmitPostResponse = (PostSubmitResponse);
 
-export type GetResultOfPaerApiResultSpecificGetData = {
+export type GetResultOfPaerApiV1ResultsSpecificGetData = {
     paperId: string;
     testId: string;
 };
 
-export type GetResultOfPaerApiResultSpecificGetResponse = (GetPaperResponse);
+export type GetResultOfPaerApiV1ResultsSpecificGetResponse = (GetPaperResponse);
 
-export type GetMyResultOnlyMetaApiResultMetaMeGetResponse = (GetResultResponse);
+export type GetMyResultOnlyMetaApiV1ResultsMetaMeGetResponse = (GetResultResponse);
 
-export type GetStudentResultOnlyMetaApiResultMetaGetData = {
+export type GetStudentResultOnlyMetaApiV1ResultsMetaAllGetData = {
     studentId: string;
 };
 
-export type GetStudentResultOnlyMetaApiResultMetaGetResponse = (GetResultResponse);
+export type GetStudentResultOnlyMetaApiV1ResultsMetaAllGetResponse = (GetResultResponse);
 
-export type GetStudentsApiStudentsGetResponse = (GetStudentsResponse);
-
-export type SignUpApiSignUpPostData = {
+export type SignUpApiV1UsersSignUpPostData = {
     requestBody: UserCreate;
 };
 
-export type SignUpApiSignUpPostResponse = (UserDTO);
+export type SignUpApiV1UsersSignUpPostResponse = (UserDTO);
 
-export type SignInApiSignInPostData = {
-    formData: Body_sign_in_api_sign_in_post;
+export type SignInApiV1UsersSignInPostData = {
+    formData: Body_sign_in_api_v1_users_sign_in_post;
 };
 
-export type SignInApiSignInPostResponse = (Token);
+export type SignInApiV1UsersSignInPostResponse = (Token);
 
-export type GetMeApiUserMeGetResponse = (UserDTO);
+export type GetMeApiV1UsersMeGetResponse = (UserDTO);
+
+export type GetStudentsApiV1UsersStudentsGetResponse = (GetStudentsResponse);

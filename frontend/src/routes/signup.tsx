@@ -11,8 +11,8 @@ import {
   } from "@chakra-ui/react";
   import { createFileRoute, useNavigate } from "@tanstack/react-router";
   import { useState } from "react";
-  import { DefaultService } from "../client"; // 경로는 프로젝트에 맞게 수정
-  
+  import { UsersService } from "../client"; // 경로는 프로젝트에 맞게 수정
+
   export const Route = createFileRoute("/signup")({
     component: SignUp,
   });
@@ -45,7 +45,7 @@ import {
       setIsSubmitting(true);
   
       try {
-        await DefaultService.signUpApiSignUpPost({
+        await UsersService.signUpApiV1UsersSignUpPost({
           requestBody: {
             name, // 아이디
             password,

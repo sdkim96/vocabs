@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { DefaultService, UserDTO } from "../client";
+import { UsersService, UserDTO } from "../client";
 
 export const isLoggedIn = (): boolean => {
   const token = localStorage.getItem("token");
@@ -27,7 +27,7 @@ const useAuth = () => {
       }
 
       try {
-        const response = await DefaultService.getMeApiUserMeGet(); // 유저 정보 가져오기
+        const response = await UsersService.getMeApiV1UsersMeGet(); // 유저 정보 가져오기
         setState({
           currentUser: response ?? null, // 바인딩된 사용자 정보
           isLoading: false,

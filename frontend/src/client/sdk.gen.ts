@@ -3,18 +3,18 @@
 import type { CancelablePromise } from './core/CancelablePromise';
 import { OpenAPI } from './core/OpenAPI';
 import { request as __request } from './core/request';
-import type { GetPaperApiPaperGetResponse, SubmitPaperApiSubmitPostData, SubmitPaperApiSubmitPostResponse, GetResultOfPaerApiResultSpecificGetData, GetResultOfPaerApiResultSpecificGetResponse, GetMyResultOnlyMetaApiResultMetaMeGetResponse, GetStudentResultOnlyMetaApiResultMetaGetData, GetStudentResultOnlyMetaApiResultMetaGetResponse, GetStudentsApiStudentsGetResponse, SignUpApiSignUpPostData, SignUpApiSignUpPostResponse, SignInApiSignInPostData, SignInApiSignInPostResponse, GetMeApiUserMeGetResponse } from './types.gen';
+import type { GetPaperApiV1PapersPaperGetResponse, SubmitPaperApiV1PapersSubmitPostData, SubmitPaperApiV1PapersSubmitPostResponse, GetResultOfPaerApiV1ResultsSpecificGetData, GetResultOfPaerApiV1ResultsSpecificGetResponse, GetMyResultOnlyMetaApiV1ResultsMetaMeGetResponse, GetStudentResultOnlyMetaApiV1ResultsMetaAllGetData, GetStudentResultOnlyMetaApiV1ResultsMetaAllGetResponse, SignUpApiV1UsersSignUpPostData, SignUpApiV1UsersSignUpPostResponse, SignInApiV1UsersSignInPostData, SignInApiV1UsersSignInPostResponse, GetMeApiV1UsersMeGetResponse, GetStudentsApiV1UsersStudentsGetResponse } from './types.gen';
 
-export class DefaultService {
+export class PapersService {
     /**
      * Get Paper
      * @returns GetTestPaperResponse Successful Response
      * @throws ApiError
      */
-    public static getPaperApiPaperGet(): CancelablePromise<GetPaperApiPaperGetResponse> {
+    public static getPaperApiV1PapersPaperGet(): CancelablePromise<GetPaperApiV1PapersPaperGetResponse> {
         return __request(OpenAPI, {
             method: 'GET',
-            url: '/api/paper'
+            url: '/api/v1/papers/paper'
         });
     }
     
@@ -25,10 +25,10 @@ export class DefaultService {
      * @returns PostSubmitResponse Successful Response
      * @throws ApiError
      */
-    public static submitPaperApiSubmitPost(data: SubmitPaperApiSubmitPostData): CancelablePromise<SubmitPaperApiSubmitPostResponse> {
+    public static submitPaperApiV1PapersSubmitPost(data: SubmitPaperApiV1PapersSubmitPostData): CancelablePromise<SubmitPaperApiV1PapersSubmitPostResponse> {
         return __request(OpenAPI, {
             method: 'POST',
-            url: '/api/submit',
+            url: '/api/v1/papers/submit',
             body: data.requestBody,
             mediaType: 'application/json',
             errors: {
@@ -37,6 +37,9 @@ export class DefaultService {
         });
     }
     
+}
+
+export class ResultsService {
     /**
      * Get Result Of Paer
      * @param data The data for the request.
@@ -45,10 +48,10 @@ export class DefaultService {
      * @returns GetPaperResponse Successful Response
      * @throws ApiError
      */
-    public static getResultOfPaerApiResultSpecificGet(data: GetResultOfPaerApiResultSpecificGetData): CancelablePromise<GetResultOfPaerApiResultSpecificGetResponse> {
+    public static getResultOfPaerApiV1ResultsSpecificGet(data: GetResultOfPaerApiV1ResultsSpecificGetData): CancelablePromise<GetResultOfPaerApiV1ResultsSpecificGetResponse> {
         return __request(OpenAPI, {
             method: 'GET',
-            url: '/api/result/specific',
+            url: '/api/v1/results/specific',
             query: {
                 paper_id: data.paperId,
                 test_id: data.testId
@@ -64,10 +67,10 @@ export class DefaultService {
      * @returns GetResultResponse Successful Response
      * @throws ApiError
      */
-    public static getMyResultOnlyMetaApiResultMetaMeGet(): CancelablePromise<GetMyResultOnlyMetaApiResultMetaMeGetResponse> {
+    public static getMyResultOnlyMetaApiV1ResultsMetaMeGet(): CancelablePromise<GetMyResultOnlyMetaApiV1ResultsMetaMeGetResponse> {
         return __request(OpenAPI, {
             method: 'GET',
-            url: '/api/result/meta/me'
+            url: '/api/v1/results/meta/me'
         });
     }
     
@@ -78,10 +81,10 @@ export class DefaultService {
      * @returns GetResultResponse Successful Response
      * @throws ApiError
      */
-    public static getStudentResultOnlyMetaApiResultMetaGet(data: GetStudentResultOnlyMetaApiResultMetaGetData): CancelablePromise<GetStudentResultOnlyMetaApiResultMetaGetResponse> {
+    public static getStudentResultOnlyMetaApiV1ResultsMetaAllGet(data: GetStudentResultOnlyMetaApiV1ResultsMetaAllGetData): CancelablePromise<GetStudentResultOnlyMetaApiV1ResultsMetaAllGetResponse> {
         return __request(OpenAPI, {
             method: 'GET',
-            url: '/api/result/meta',
+            url: '/api/v1/results/meta/all',
             query: {
                 student_id: data.studentId
             },
@@ -91,18 +94,9 @@ export class DefaultService {
         });
     }
     
-    /**
-     * Get Students
-     * @returns GetStudentsResponse Successful Response
-     * @throws ApiError
-     */
-    public static getStudentsApiStudentsGet(): CancelablePromise<GetStudentsApiStudentsGetResponse> {
-        return __request(OpenAPI, {
-            method: 'GET',
-            url: '/api/students'
-        });
-    }
-    
+}
+
+export class UsersService {
     /**
      * Sign Up
      * @param data The data for the request.
@@ -110,10 +104,10 @@ export class DefaultService {
      * @returns UserDTO Successful Response
      * @throws ApiError
      */
-    public static signUpApiSignUpPost(data: SignUpApiSignUpPostData): CancelablePromise<SignUpApiSignUpPostResponse> {
+    public static signUpApiV1UsersSignUpPost(data: SignUpApiV1UsersSignUpPostData): CancelablePromise<SignUpApiV1UsersSignUpPostResponse> {
         return __request(OpenAPI, {
             method: 'POST',
-            url: '/api/sign_up',
+            url: '/api/v1/users/sign_up',
             body: data.requestBody,
             mediaType: 'application/json',
             errors: {
@@ -129,10 +123,10 @@ export class DefaultService {
      * @returns Token Successful Response
      * @throws ApiError
      */
-    public static signInApiSignInPost(data: SignInApiSignInPostData): CancelablePromise<SignInApiSignInPostResponse> {
+    public static signInApiV1UsersSignInPost(data: SignInApiV1UsersSignInPostData): CancelablePromise<SignInApiV1UsersSignInPostResponse> {
         return __request(OpenAPI, {
             method: 'POST',
-            url: '/api/sign_in',
+            url: '/api/v1/users/sign_in',
             formData: data.formData,
             mediaType: 'application/x-www-form-urlencoded',
             errors: {
@@ -146,10 +140,22 @@ export class DefaultService {
      * @returns UserDTO Successful Response
      * @throws ApiError
      */
-    public static getMeApiUserMeGet(): CancelablePromise<GetMeApiUserMeGetResponse> {
+    public static getMeApiV1UsersMeGet(): CancelablePromise<GetMeApiV1UsersMeGetResponse> {
         return __request(OpenAPI, {
             method: 'GET',
-            url: '/api/user/me'
+            url: '/api/v1/users/me'
+        });
+    }
+    
+    /**
+     * Get Students
+     * @returns GetStudentsResponse Successful Response
+     * @throws ApiError
+     */
+    public static getStudentsApiV1UsersStudentsGet(): CancelablePromise<GetStudentsApiV1UsersStudentsGetResponse> {
+        return __request(OpenAPI, {
+            method: 'GET',
+            url: '/api/v1/users/students'
         });
     }
     

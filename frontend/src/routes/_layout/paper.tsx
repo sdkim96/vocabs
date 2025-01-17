@@ -1,7 +1,7 @@
 import { Box, Button, Container, Flex, Radio, RadioGroup, Stack, Text } from "@chakra-ui/react";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { DefaultService } from "../../client"; // 경로를 프로젝트에 맞게 수정
+import { PapersService } from "../../client"; // 경로를 프로젝트에 맞게 수정
 
 export const Route = createFileRoute("/_layout/paper")({
   component: PaperManagement,
@@ -15,7 +15,7 @@ function PaperManagement() {
 
   useEffect(() => {
     // 문제지 조회 API 호출
-    DefaultService.getPaperApiPaperGet()
+    PapersService.getPaperApiV1PapersPaperGet()
       .then((response) => {
         setPaperData(response.paper); // 문제지 데이터 저장
       })
@@ -50,7 +50,7 @@ function PaperManagement() {
     };
 
     // 문제 제출 API 호출
-    DefaultService.submitPaperApiSubmitPost(submitData)
+    PapersService.submitPaperApiV1PapersSubmitPost(submitData)
       .then((response) => {
         // 제출 성공 시 점수와 함께 /submit 페이지로 이동
         navigate({
