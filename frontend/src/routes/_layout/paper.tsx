@@ -55,7 +55,7 @@ function PaperManagement() {
         // 제출 성공 시 점수와 함께 /submit 페이지로 이동
         navigate({
           to: "/submit",
-          search: { score: response.score.toString() }, // 점수를 쿼리 파라미터로 전달
+          search: (prev: any) => ({ ...prev, score: response.score }),
         });
       })
       .catch((err) => {

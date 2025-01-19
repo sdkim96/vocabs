@@ -1,12 +1,24 @@
 import { Box, Container, Flex, Text } from "@chakra-ui/react";
 import { createFileRoute, useSearch } from "@tanstack/react-router";
+import { useEffect } from "react";
 
 export const Route = createFileRoute("/_layout/submit")({
   component: SubmitResult,
 });
 
 function SubmitResult() {
-  const { score } = useSearch({ select: (search) => search.score, strict: false });
+  const score = useSearch({
+    from: "/_layout/submit",
+    select: (search) => {
+      return search.score
+    },
+  });
+
+  useEffect(() => {
+    console.log("Updated score:", score); // 상태 업데이트 확인
+  }, [score]);
+
+  console.log(score);
 
   return (
     <Container maxW="full">

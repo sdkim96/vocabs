@@ -17,6 +17,7 @@ import {
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { UsersService, PaperMeta, UserDTO, ResultsService } from "../../client"; // 경로는 프로젝트에 맞게 수정
+import TestDetail from "../../components/Test/TestDetail"; // 경로는 프로젝트에 맞게 수정
 
 export const Route = createFileRoute("/_layout/admin")({
   component: AdminPage,
@@ -27,6 +28,7 @@ function AdminPage() {
   const [students, setStudents] = useState<UserDTO[]>([]);
   const [metaData, setMetaData] = useState<PaperMeta[]>([]);
   const [selectedStudent, setSelectedStudent] = useState<UserDTO | null>(null);
+  const [selectedTestPaper, setSelectedTestPaper] = useState<any | null>(null); // 선택된 시험지 데이터
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
@@ -71,6 +73,38 @@ function AdminPage() {
     }
   };
 
+  const fetchTestPaperDetails = async (paperId: string, testId: string) => {
+    setLoading(true);
+    try {
+      const response = await ResultsService.getResultOfPaperOfApiV1ResultsSpecificGet({
+        studentId: selectedStudent?.id!,
+        paperId,
+        testId,
+      });
+      setSelectedTestPaper(response.paper || null);
+    } catch (error) {
+      console.error("시험지 상세 정보를 가져오는 데 실패했습니다:", error);
+      toast({
+        title: "오류",
+        description: "시험지 상세 정보를 가져오는 데 실패했습니다.",
+        status: "error",
+        duration: 3000,
+        isClosable: true,
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  if (selectedTestPaper) {
+    return (
+      <TestDetail
+        paper={selectedTestPaper}
+        onBack={() => setSelectedTestPaper(null)} // 뒤로가기 설정
+      />
+    );
+  }
+
   return (
     <Container maxW="full" py={8}>
       <Flex direction="column" align="center">
@@ -92,17 +126,29 @@ function AdminPage() {
               <Table variant="simple">
                 <Thead>
                   <Tr>
-                    <Th>시험지 ID</Th>
-                    <Th>테스트 ID</Th>
                     <Th>생성일</Th>
+                    <Th>점수</Th>
+                    <Th>상세 확인</Th>
                   </Tr>
                 </Thead>
                 <Tbody>
                   {metaData.map((meta) => (
                     <Tr key={meta.paper_id}>
-                      <Td>{meta.paper_id}</Td>
-                      <Td>{meta.test_id}</Td>
                       <Td>{new Date(meta.created_at).toLocaleDateString()}</Td>
+                      <Td>{meta.score}</Td>
+                      <Td>
+                        <Button
+                          size="sm"
+                          colorScheme="blue"
+                          onClick={() => fetchTestPaperDetails(
+                            
+                            meta.paper_id, 
+                            meta.test_id
+                          )} // 상세 정보 가져오기
+                        >
+                          상세 확인
+                        </Button>
+                      </Td>
                     </Tr>
                   ))}
                 </Tbody>
@@ -122,7 +168,7 @@ function AdminPage() {
                   <Th>이름</Th>
                   <Th>닉네임</Th>
                   <Th>유형</Th>
-                  <Th>액션</Th>
+                  <Th>시험 목록 학인</Th>
                 </Tr>
               </Thead>
               <Tbody>

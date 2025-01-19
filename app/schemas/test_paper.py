@@ -189,6 +189,7 @@ class PaperMeta(BaseModel):
     test_id: str
     created_at: datetime
     updated_at: datetime
+    score: Optional[int] = None
 
 
 class Paper(BaseModel):

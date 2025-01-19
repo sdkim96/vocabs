@@ -3,7 +3,7 @@
 import type { CancelablePromise } from './core/CancelablePromise';
 import { OpenAPI } from './core/OpenAPI';
 import { request as __request } from './core/request';
-import type { GetPaperApiV1PapersPaperGetResponse, SubmitPaperApiV1PapersSubmitPostData, SubmitPaperApiV1PapersSubmitPostResponse, GetResultOfPaerApiV1ResultsSpecificGetData, GetResultOfPaerApiV1ResultsSpecificGetResponse, GetMyResultOnlyMetaApiV1ResultsMetaMeGetResponse, GetStudentResultOnlyMetaApiV1ResultsMetaAllGetData, GetStudentResultOnlyMetaApiV1ResultsMetaAllGetResponse, SignUpApiV1UsersSignUpPostData, SignUpApiV1UsersSignUpPostResponse, SignInApiV1UsersSignInPostData, SignInApiV1UsersSignInPostResponse, GetMeApiV1UsersMeGetResponse, GetStudentsApiV1UsersStudentsGetResponse } from './types.gen';
+import type { GetPaperApiV1PapersPaperGetResponse, SubmitPaperApiV1PapersSubmitPostData, SubmitPaperApiV1PapersSubmitPostResponse, GetMyResultOfPaperApiV1ResultsSpecificMeGetData, GetMyResultOfPaperApiV1ResultsSpecificMeGetResponse, GetResultOfPaperOfApiV1ResultsSpecificGetData, GetResultOfPaperOfApiV1ResultsSpecificGetResponse, GetMyResultOnlyMetaApiV1ResultsMetaMeGetResponse, GetStudentResultOnlyMetaApiV1ResultsMetaAllGetData, GetStudentResultOnlyMetaApiV1ResultsMetaAllGetResponse, SignUpApiV1UsersSignUpPostData, SignUpApiV1UsersSignUpPostResponse, SignInApiV1UsersSignInPostData, SignInApiV1UsersSignInPostResponse, GetMeApiV1UsersMeGetResponse, GetStudentsApiV1UsersStudentsGetResponse } from './types.gen';
 
 export class PapersService {
     /**
@@ -41,18 +41,42 @@ export class PapersService {
 
 export class ResultsService {
     /**
-     * Get Result Of Paer
+     * Get My Result Of Paper
      * @param data The data for the request.
      * @param data.paperId
      * @param data.testId
      * @returns GetPaperResponse Successful Response
      * @throws ApiError
      */
-    public static getResultOfPaerApiV1ResultsSpecificGet(data: GetResultOfPaerApiV1ResultsSpecificGetData): CancelablePromise<GetResultOfPaerApiV1ResultsSpecificGetResponse> {
+    public static getMyResultOfPaperApiV1ResultsSpecificMeGet(data: GetMyResultOfPaperApiV1ResultsSpecificMeGetData): CancelablePromise<GetMyResultOfPaperApiV1ResultsSpecificMeGetResponse> {
+        return __request(OpenAPI, {
+            method: 'GET',
+            url: '/api/v1/results/specific/me',
+            query: {
+                paper_id: data.paperId,
+                test_id: data.testId
+            },
+            errors: {
+                422: 'Validation Error'
+            }
+        });
+    }
+    
+    /**
+     * Get Result Of Paper Of
+     * @param data The data for the request.
+     * @param data.studentId
+     * @param data.paperId
+     * @param data.testId
+     * @returns GetPaperResponse Successful Response
+     * @throws ApiError
+     */
+    public static getResultOfPaperOfApiV1ResultsSpecificGet(data: GetResultOfPaperOfApiV1ResultsSpecificGetData): CancelablePromise<GetResultOfPaperOfApiV1ResultsSpecificGetResponse> {
         return __request(OpenAPI, {
             method: 'GET',
             url: '/api/v1/results/specific',
             query: {
+                student_id: data.studentId,
                 paper_id: data.paperId,
                 test_id: data.testId
             },

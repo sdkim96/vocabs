@@ -69,6 +69,7 @@ export type PaperMeta = {
     test_id: string;
     created_at: string;
     updated_at: string;
+    score?: (number | null);
 };
 
 export type PostSubmitResponse = {
@@ -166,12 +167,20 @@ export type SubmitPaperApiV1PapersSubmitPostData = {
 
 export type SubmitPaperApiV1PapersSubmitPostResponse = (PostSubmitResponse);
 
-export type GetResultOfPaerApiV1ResultsSpecificGetData = {
+export type GetMyResultOfPaperApiV1ResultsSpecificMeGetData = {
     paperId: string;
     testId: string;
 };
 
-export type GetResultOfPaerApiV1ResultsSpecificGetResponse = (GetPaperResponse);
+export type GetMyResultOfPaperApiV1ResultsSpecificMeGetResponse = (GetPaperResponse);
+
+export type GetResultOfPaperOfApiV1ResultsSpecificGetData = {
+    paperId: string;
+    studentId: string;
+    testId: string;
+};
+
+export type GetResultOfPaperOfApiV1ResultsSpecificGetResponse = (GetPaperResponse);
 
 export type GetMyResultOnlyMetaApiV1ResultsMetaMeGetResponse = (GetResultResponse);
 

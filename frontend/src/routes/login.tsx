@@ -137,9 +137,9 @@ function Login() {
         </InputGroup>
         {error && <FormErrorMessage>{error}</FormErrorMessage>}
       </FormControl>
-      <Link as={RouterLink} to="/recover-password" color="blue.500">
+      {/* <Link as={RouterLink} to="/recover-password" color="blue.500">
         비밀번호를 잊으셨나요?
-      </Link>
+      </Link> */}
       <Button variant="primary" type="submit" isLoading={isSubmitting}>
         로그인
       </Button>

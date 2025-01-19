@@ -65,7 +65,7 @@ async def submit_paper(test_paper: TestPaper, me: User = Depends(get_current_use
     PaperStore.put(
         db, 
         namespace, 
-        str(test_paper.paper_id),
+        str(test_paper.test_id),
         changed_paper.model_dump(mode="json")
     )
 
