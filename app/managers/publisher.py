@@ -1,5 +1,6 @@
 import uuid
 from typing import List
+from datetime import datetime
 
 from sqlmodel import Session, select
 from app.schemas import (
@@ -24,6 +25,9 @@ class Publisher:
         self.request_key = request_key
         self.target_user = target_user
 
+    def same_time(self, dt1: datetime, dt2: datetime) -> bool:
+        return abs((dt1 - dt2).total_seconds()) < 1
+
     def publish_paper(self, problem_factory: ProblemFactory) -> Paper:
         imported = problem_factory.run_pipeline()
         if imported is None:
@@ -41,8 +45,27 @@ class Publisher:
 
         namespace = (user.id,)
         papers = PaperStore.search(db, namespace, option) # type: ignore
+
+        right_papers = []
         
-        return papers
+        ## 제출된 문제지만 가져옴
+        match option:
+            case StoreSearchOption.ALL:
+                
+                for paper in papers:
+                    if self.same_time(paper.created_at, paper.updated_at) is False:                        
+                        right_papers.append(paper)
+            
+            case StoreSearchOption.META:
+
+                for paper in papers:
+                    if self.same_time(paper.created_at, paper.updated_at) is False:
+                        right_papers.append(paper)
+            
+            case StoreSearchOption.VALUE:
+                right_papers = papers
+        
+        return right_papers
 
     def get_papers_by_paper(self, db: Session, paper: Paper) -> List[Paper]:
         """ 같은 문제지들을 가져옴"""
